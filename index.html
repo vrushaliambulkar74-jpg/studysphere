@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySphere | Learn Together</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>StudySphere</h1>
+        <p>Your learning journey starts here!</p>
+    </header>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#notes">Study Notes</a>
+        <a href="#quizzes">Quizzes</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>Learn Together. Grow Together.</h2>
+            <p>Discover study notes, question papers, and quizzes
+               shared by students from different colleges.</p>
+
+            <input type="text" id="searchInput"
+                   placeholder="Search subjects...">
+            <button id="searchButton">Search</button>
+            <p id="searchMessage"></p>
+        </section>
+
+        <section id="notes">
+            <h2>Explore Study Resources</h2>
+
+            <div class="cards">
+                <article class="card">
+                    <h3>Java Programming</h3>
+                    <p>Learn Java concepts and practice coding.</p>
+                    <button class="exploreButton">Explore Notes</button>
+                </article>
+
+                <article class="card">
+                    <h3>Web Development</h3>
+                    <p>Explore HTML, CSS, and JavaScript.</p>
+                    <button class="exploreButton">Explore Notes</button>
+                </article>
+
+                <article class="card">
+                    <h3>Database Management</h3>
+                    <p>Study SQL and database concepts.</p>
+                    <button class="exploreButton">Explore Notes</button>
+                </article>
+            </div>
+        </section>
+
+        <section id="quizzes">
+            <h2>Practice and Test Yourself</h2>
+            <p>Prepare for exams with quizzes and practice tests.</p>
+        </section>
+
+        <section id="about">
+            <h2>About StudySphere</h2>
+            <p>A collaborative learning platform for students
+               from colleges everywhere.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 StudySphere. Learn Together.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
