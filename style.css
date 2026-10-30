@@ -422,3 +422,14 @@ footer {
         flex: 1 1 auto;
     }
 }
+
+/* Corrected note action buttons */
+.note-buttons { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:18px; }
+.note-buttons button { margin:0; }
+.note-buttons .view-button { background:#2563eb; color:#fff; }
+.note-buttons .view-button:hover { background:#1d4ed8; }
+.note-buttons .download-button { background:#dcfce7; color:#166534; }
+.note-buttons .download-button:hover { background:#bbf7d0; }
+.note-buttons .delete-button { background:#d5d2dd; color:#bc5050; border:1px solid #ebe3e3; font-size:12px; border-radius:5px; }
+.note-buttons .delete-button:hover { background:#fce7e7; }
+.note-buttons button:disabled { opacity:.6; cursor:wait; }

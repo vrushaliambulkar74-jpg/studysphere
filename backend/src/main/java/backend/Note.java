@@ -14,7 +14,9 @@ public class Note {
 
     private String title;
     private String college;
+    private String course;
     private String branch;
+    private String academicYear;
     private String semester;
     private String subject;
     private String fileName;
@@ -43,12 +45,28 @@ public class Note {
         this.college = college;
     }
 
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
     public String getBranch() {
         return branch;
     }
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    public String getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(String academicYear) {
+        this.academicYear = academicYear;
     }
 
     public String getSemester() {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.DeleteMapping;
+
 import backend.Note;
 import backend.NoteRepository;
 
@@ -53,13 +54,15 @@ public class NotesController {
         public ResponseEntity<Map<String, String>> uploadNote(
                         @RequestParam("title") String title,
                         @RequestParam("college") String college,
+                        @RequestParam("course") String course,
                         @RequestParam("branch") String branch,
+                        @RequestParam("academicYear") String academicYear,
                         @RequestParam("semester") String semester,
                         @RequestParam("subject") String subject,
                         @RequestParam("file") MultipartFile file) {
 
-                if (title.isBlank() || college.isBlank()
-                                || branch.isBlank() || semester.isBlank()
+                if (title.isBlank() || college.isBlank() || course.isBlank()
+                                || branch.isBlank() || academicYear.isBlank() || semester.isBlank()
                                 || subject.isBlank() || file.isEmpty()) {
 
                         return ResponseEntity.badRequest().body(
@@ -105,7 +108,9 @@ public class NotesController {
                         Note note = new Note();
                         note.setTitle(title);
                         note.setCollege(college);
+                        note.setCourse(course);
                         note.setBranch(branch);
+                        note.setAcademicYear(academicYear);
                         note.setSemester(semester);
                         note.setSubject(subject);
                         note.setFileName(savedFilename);
@@ -118,7 +123,9 @@ public class NotesController {
                                         "id", savedNote.getId().toString(),
                                         "title", savedNote.getTitle(),
                                         "college", savedNote.getCollege(),
+                                        "course", savedNote.getCourse(),
                                         "branch", savedNote.getBranch(),
+                                        "academicYear", savedNote.getAcademicYear(),
                                         "semester", savedNote.getSemester(),
                                         "subject", savedNote.getSubject(),
                                         "filename", savedNote.getFileName()));

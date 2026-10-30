@@ -124,9 +124,28 @@
         </div>
 
         <div class="upload-field">
-            <label for="branchName">Branch / Course</label>
+            <label for="courseName">Course / Degree</label>
+            <input type="text" id="courseName" required
+                   placeholder="e.g. BTech, BA, BCom, BSc">
+        </div>
+
+        <div class="upload-field">
+            <label for="branchName">Branch / Specialization</label>
             <input type="text" id="branchName" required
-                   placeholder="e.g. BA, BCom, BSc, CSE">
+                   placeholder="e.g. CSE, IT, History, Accounting">
+        </div>
+
+        <div class="upload-field">
+            <label for="academicYear">Academic Year</label>
+            <select id="academicYear" required>
+                <option value="">Select academic year</option>
+                <option value="First Year">First Year</option>
+                <option value="Second Year">Second Year</option>
+                <option value="Third Year">Third Year</option>
+                <option value="Fourth Year">Fourth Year</option>
+                <option value="Fifth Year">Fifth Year</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
 
         <div class="upload-field">
