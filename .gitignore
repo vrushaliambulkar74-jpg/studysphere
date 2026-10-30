@@ -1,0 +1,19 @@
+# Java build files
+backend/target/
+
+# Local database files
+backend/data/
+*.mv.db
+*.trace.db
+
+# Uploaded PDFs
+backend/uploads/
+
+# Environment and IDE files
+.env
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db

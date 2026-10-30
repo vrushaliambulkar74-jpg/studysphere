@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySphere | Study Notes Library</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>StudySphere</h1>
+        <p>Your learning journey starts here!</p>
+    </header>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#notes">Study Notes</a>
+        <a href="#quizzes">Quizzes</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>Learn Together. Grow Together.</h2>
+            <p>Explore study materials shared by students
+               from different colleges.</p>
+        </section>
+
+        <section id="notes">
+            <h2>Study Notes Library</h2>
+            <p class="section-description">
+                Find notes according to your college, branch,
+                semester, and subject.
+            </p>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="collegeFilter">College</label>
+                    <input
+                        type="text"
+                        id="collegeFilter"
+                        placeholder="Enter college name...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="branchFilter">Branch</label>
+                    <select id="branchFilter">
+                        <option value="">All Branches</option>
+                        <option value="CSE">CSE</option>
+                        <option value="AI/ML">AI/ML</option>
+                        <option value="IT">IT</option>
+                        <option value="ENTC">ENTC</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="semesterFilter">Semester</label>
+                    <select id="semesterFilter">
+                        <option value="">All Semesters</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="subjectFilter">Subject</label>
+                    <select id="subjectFilter">
+                        <option value="">All Subjects</option>
+                        <option value="Java Programming">Java Programming</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Database Management">Database Management</option>
+                        <option value="Machine Learning">Machine Learning</option>
+                    </select>
+                </div>
+
+                <div class="filter-group search-group">
+                    <label for="searchInput">Search notes</label>
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search a topic or subject..."
+                    >
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button id="searchButton">Find Notes</button>
+                <button id="resetButton" class="reset-button">
+                    Reset Filters
+                </button>
+            </div>
+
+            <p id="resultCount" aria-live="polite"></p>
+
+            <div id="notesContainer" class="cards"></div>
+
+            <p id="emptyMessage" hidden>
+                No notes match your filters. Try changing your selections.
+            </p>
+        </section>
+
+        <section id="upload-notes">
+    <h2>Share Your Study Notes</h2>
+    <p>Help students everywhere by sharing your learning resources.</p>
+
+    <form id="uploadForm">
+        <div class="upload-field">
+            <label for="noteTitle">Notes Title</label>
+            <input type="text" id="noteTitle" required
+                   placeholder="e.g. Introduction to Political Science">
+        </div>
+
+        <div class="upload-field">
+            <label for="collegeName">College Name</label>
+            <input type="text" id="collegeName" required
+                   placeholder="Enter your college name">
+        </div>
+
+        <div class="upload-field">
+            <label for="branchName">Branch / Course</label>
+            <input type="text" id="branchName" required
+                   placeholder="e.g. BA, BCom, BSc, CSE">
+        </div>
+
+        <div class="upload-field">
+            <label for="semesterNumber">Semester</label>
+            <select id="semesterNumber" required>
+                <option value="">Select semester</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+            </select>
+        </div>
+
+        <div class="upload-field">
+            <label for="subjectName">Subject</label>
+            <input type="text" id="subjectName" required
+                   placeholder="Enter the subject">
+        </div>
+
+        <div class="upload-field">
+            <label for="noteFile">Select Notes (PDF only)</label>
+            <input type="file" id="noteFile" accept=".pdf,application/pdf" required>
+        </div>
+
+        <button type="submit">Share Notes</button>
+        <p id="uploadMessage" role="status"></p>
+    </form>
+</section>
+
+        <section id="quizzes">
+            <h2>Practice and Test Yourself</h2>
+            <p>Quizzes and practice tests are coming soon!</p>
+        </section>
+
+        <section id="about">
+            <h2>About StudySphere</h2>
+            <p>A collaborative learning platform for students
+               from colleges everywhere.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 StudySphere. Learn Together.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
