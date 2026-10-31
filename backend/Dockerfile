@@ -7,12 +7,9 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-RUN echo "Checking PostgreSQL driver dependency..." && 
-    mvn dependency:tree -Dincludes=org.postgresql:postgresql
+RUN mvn dependency:tree -Dincludes=org.postgresql:postgresql
 
-RUN echo "Checking PostgreSQL driver inside packaged JAR..." && 
-    jar tf target/*.jar | grep "BOOT-INF/lib/postgresql-" || 
-    (echo "ERROR: PostgreSQL driver missing from packaged JAR" && exit 1)
+RUN jar tf target/*.jar | grep "BOOT-INF/lib/postgresql-" || (echo "ERROR: PostgreSQL driver missing from packaged JAR" && exit 1)
 
 FROM eclipse-temurin:21-jre
 
