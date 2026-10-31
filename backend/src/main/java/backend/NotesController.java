@@ -185,34 +185,11 @@ public class NotesController {
         }
 
         @DeleteMapping("/api/notes/{id}")
-        public ResponseEntity<Map<String, String>> deleteNote(
-                        @PathVariable Long id) {
-
-                Note note = noteRepository.findById(id)
-                                .orElseThrow(() -> new ResponseStatusException(
-                                                HttpStatus.NOT_FOUND, "Note not found"));
-
-                try {
-                        if (storageService.isConfigured()) {
-                                storageService.delete(note.getFileName());
-                        } else {
-                                Path file = Paths.get(note.getFilePath())
-                                                .toAbsolutePath().normalize();
-                                Files.deleteIfExists(file);
-                        }
-
-                        noteRepository.delete(note);
-
-                        return ResponseEntity.ok(
-                                        Map.of("message", "Note deleted successfully."));
-
-                } catch (IOException ex) {
-                        return ResponseEntity.status(
-                                        HttpStatus.INTERNAL_SERVER_ERROR).body(
-                                                        Map.of("message", "Could not delete the PDF file."));
-                }
+        public ResponseEntity<Map<String, String>> deleteNote(@PathVariable Long id) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                .body(Map.of("message",
+                                                "Note deletion is temporarily disabled until authentication is implemented."));
         }
-
         private Resource loadResource(Note note) {
 
                 try {
