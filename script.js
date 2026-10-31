@@ -47,17 +47,6 @@ function displayNotes(items) {
         const link = document.createElement("a"); link.href = `${API_BASE}/${encodeURIComponent(note.id)}/file`;
         link.download = note.fileName; document.body.appendChild(link); link.click(); link.remove();
       }));
-      actions.appendChild(makeButton("Delete", "delete-button", async event => {
-        const button = event.currentTarget;
-        if (!confirm(`Delete "${note.title}"? This cannot be undone.`)) return;
-        button.disabled = true;
-        try {
-          const response = await fetch(`${API_BASE}/${encodeURIComponent(note.id)}`, { method:"DELETE" });
-          const body = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(body.message || `Server error (${response.status})`);
-          await loadNotes();
-        } catch (err) { alert("Could not delete note: " + err.message); button.disabled = false; }
-      }));
     }
     card.appendChild(actions); notesContainer.appendChild(card);
   });
