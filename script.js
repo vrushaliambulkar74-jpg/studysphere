@@ -1,5 +1,5 @@
 // StudySphere frontend: college-based discovery and PDF sharing.
-const API_BASE = "http://localhost:8080/api/notes";
+const API_BASE = "https://studysphere-1iz2.onrender.com/api/notes";
 
 const sampleNotes = [
   { title:"Java Basics and OOP", college:"Raisoni College", course:"BTech", branch:"CSE", academicYear:"Second Year", semester:"4", subject:"Java Programming", type:"Sample Notes", description:"Introduction to Java, classes, objects, and inheritance." },
