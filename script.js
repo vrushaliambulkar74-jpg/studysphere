@@ -1,14 +1,17 @@
 // StudySphere frontend: college-based discovery and PDF sharing.
 const API_BASE ="https://studysphere-1iz2.onrender.com/api/notes";
+const SUPABASE_URL = "https://ssmqyimlaysseoyqkokx.supabase.co";
+const STORAGE_BUCKET = "StudySphere-pdfs";
+
 const sampleNotes = [
-  { title:"Java Basics and OOP", college:"Raisoni College", course:"BTech", branch:"CSE", academicYear:"Second Year", semester:"4", subject:"Java Programming", type:"Sample Notes", description:"Introduction to Java, classes, objects, and inheritance." },
-  { title:"HTML and CSS Fundamentals", college:"Raisoni College", course:"BTech", branch:"IT", academicYear:"Second Year", semester:"3", subject:"Web Development", type:"Sample Notes", description:"HTML structure, CSS selectors, and responsive design." },
-  { title:"SQL and Normalization", college:"Government College", course:"BSc", branch:"Computer Science", academicYear:"Second Year", semester:"4", subject:"Database Management", type:"Sample Notes", description:"SQL queries, keys, and database normalization." },
-  { title:"Introduction to Machine Learning", college:"ABC Engineering College", course:"BTech", branch:"AI/ML", academicYear:"Third Year", semester:"5", subject:"Machine Learning", type:"Sample Notes", description:"Machine learning concepts, datasets, and model training." },
-  { title:"Java Practice Questions", college:"Government College", course:"BTech", branch:"IT", academicYear:"Second Year", semester:"4", subject:"Java Programming", type:"Sample Notes", description:"Beginner-friendly Java questions for exam preparation." },
-  { title:"Web Development Question Bank", college:"ABC Engineering College", course:"BTech", branch:"CSE", academicYear:"Second Year", semester:"3", subject:"Web Development", type:"Sample Notes", description:"Practice questions covering HTML, CSS, and JavaScript." },
-  { title:"DBMS Exam Preparation", college:"Raisoni College", course:"BTech", branch:"CSE", academicYear:"Third Year", semester:"5", subject:"Database Management", type:"Sample Notes", description:"Revision questions about SQL, transactions, and keys." },
-  { title:"Machine Learning Revision", college:"Government College", course:"BTech", branch:"AI/ML", academicYear:"Third Year", semester:"6", subject:"Machine Learning", type:"Sample Notes", description:"Revision of supervised and unsupervised learning." }
+  { title:"Java Basics and OOP", college:"Others", course:"BTech", branch:"CSE", academicYear:"Second Year", semester:"4", subject:"Java Programming", type:"Sample Notes", description:"Introduction to Java, classes, objects, and inheritance.", fileName:"01_Java_Basics_and_OOP.pdf"},
+  { title:"HTML and CSS Fundamentals", college:"Raisoni College", course:"BTech", branch:"IT", academicYear:"Third Year", semester:"5", subject:"Web Development", type:"Sample Notes", description:"HTML structure, CSS selectors, and responsive design.", fileName:"02_HTML_and_CSS_Fundamentals.pdf"},
+  { title:"SQL and Normalization", college:"Government College", course:"BTech", branch:"Computer Science", academicYear:"Third Year", semester:"4", subject:"Database Management", type:"Sample Notes", description:"SQL queries, keys, and database normalization.", fileName:"03_SQL_and_Normalization.pdf"},
+  { title:"Introduction to Machine Learning", college:"Raisoni Engineering College", course:"BTech", branch:"AI/ML", academicYear:"Fourth Year", semester:"7", subject:"Machine Learning", type:"Sample Notes", description:"Machine learning concepts, datasets, and model training.", fileName:"04_Introduction_to_Machine_Learning.pdf"},
+  { title:"Java Practice Questions", college:"Government College", course:"BTech", branch:"IT", academicYear:"Second Year", semester:"4", subject:"Java Programming", type:"Sample Notes", description:"Beginner-friendly Java questions for exam preparation.", fileName:"05_Java_Practice_Questions.pdf"},
+  { title:"Web Development Question Bank", college:"ABC Engineering College", course:"BTech", branch:"CSE", academicYear:"Second Year", semester:"3", subject:"Web Development", type:"Sample Notes", description:"Practice questions covering HTML, CSS, and JavaScript.", fileName:"06_Web_Development_Question_Bank.pdf"},
+  { title:"DBMS Exam Preparation", college:"XYZ College", course:"BTech", branch:"CSE", academicYear:"Third Year", semester:"5", subject:"Database Management", type:"Sample Notes", description:"Revision questions about SQL, transactions, and keys.", fileName:"07_DBMS_Exam_Preparation.pdf"},
+  { title:"Machine Learning Revision", college:"Government College", course:"BTech", branch:"AI/ML", academicYear:"Third Year", semester:"6", subject:"Machine Learning", type:"Sample Notes", description:"Revision of supervised and unsupervised learning.", fileName:"08_Machine_Learning_Revision.pdf" }
 ];
 let notes = [...sampleNotes];
 const $ = id => document.getElementById(id);
@@ -38,23 +41,34 @@ function displayNotes(items) {
     addMeta(card, "Semester", note.semester); addMeta(card, "Subject", note.subject);
     const actions = document.createElement("div"); actions.className = "note-buttons";
     actions.appendChild(makeButton("View Details", "view-button", () => {
-    if (!note.id) {
-        alert("This is a sample note.");
-        return;
-    }
+    if (!note.id && note.fileName) {
+    const pdfUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURIComponent(note.fileName)}`;
+    window.open(pdfUrl, "_blank", "noopener");
+    return;
+}
 
-    window.open(
-        `${API_BASE}/${encodeURIComponent(note.id)}/view`,
-        "_blank",
-        "noopener"
-    );
+if (!note.id) {
+    alert("PDF not available.");
+    return;
+}
+
+window.open(
+    `${API_BASE}/${encodeURIComponent(note.id)}/view`,
+    "_blank",
+    "noopener"
+);
 }));
 
-if (note.id && note.fileName) {
+if (note.fileName) {
     actions.appendChild(makeButton("Download PDF", "download-button", () => {
         const link = document.createElement("a");
-        link.href = `${API_BASE}/${encodeURIComponent(note.id)}/file`;
+
+        link.href = note.id
+            ? `${API_BASE}/${encodeURIComponent(note.id)}/file`
+            : `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURIComponent(note.fileName)}`;
+
         link.download = note.fileName;
+        link.target = "_blank";
         document.body.appendChild(link);
         link.click();
         link.remove();
