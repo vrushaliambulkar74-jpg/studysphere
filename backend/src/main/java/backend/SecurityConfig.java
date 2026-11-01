@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -18,12 +19,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
 
+        CookieCsrfTokenRepository csrfRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+
+        csrfRepository.setCookieCustomizer(cookie -> cookie
+                .sameSite("None")
+                .secure(true));
+
+        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+
         http
                 .cors(cors -> {
                 })
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(
-                                CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                        .csrfTokenRepository(csrfRepository)
+                        .csrfTokenRequestHandler(csrfHandler))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
