@@ -61,14 +61,17 @@ window.open(
 
 if (note.fileName) {
     actions.appendChild(makeButton("Download PDF", "download-button", () => {
+        const fileUrl = note.id
+    ? `${API_BASE}/${encodeURIComponent(note.id)}/file`
+    : `${API_BASE}/sample/${encodeURIComponent(note.fileName)}/download`;
+
         const link = document.createElement("a");
+        link.href = fileUrl;
 
-        link.href = note.id
-            ? `${API_BASE}/${encodeURIComponent(note.id)}/file`
-            : `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURIComponent(note.fileName)}`;
+        if (note.id) {
+            link.download = note.fileName;
+        }
 
-        link.download = note.fileName;
-        link.target = "_blank";
         document.body.appendChild(link);
         link.click();
         link.remove();

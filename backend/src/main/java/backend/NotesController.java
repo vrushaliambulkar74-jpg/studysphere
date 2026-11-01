@@ -204,6 +204,43 @@ public class NotesController {
                                 .body(resource);
         }
 
+        @GetMapping("/api/notes/sample/{fileName}/download")
+        public ResponseEntity<Resource> downloadSamplePdf(
+                        @PathVariable String fileName) {
+
+                List<String> allowedFiles = List.of(
+                                "01_Java_Basics_and_OOP.pdf",
+                                "02_HTML_and_CSS_Fundamentals.pdf",
+                                "03_SQL_and_Normalization.pdf",
+                                "04_Introduction_to_Machine_Learning.pdf",
+                                "05_Java_Practice_Questions.pdf",
+                                "06_Web_Development_Question_Bank.pdf",
+                                "07_DBMS_Exam_Preparation.pdf",
+                                "08_Machine_Learning_Revision.pdf");
+
+                if (!allowedFiles.contains(fileName)) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Sample PDF not found");
+                }
+
+                try {
+                        byte[] pdf = storageService.download(fileName);
+
+                        Resource resource = new ByteArrayResource(pdf);
+
+                        return ResponseEntity.ok()
+                                        .contentType(MediaType.APPLICATION_PDF)
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\"" + safeFilename(fileName) + "\"")
+                                        .body(resource);
+
+                } catch (IOException ex) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Sample PDF could not be loaded");
+                }
+        }
+
         @GetMapping("/api/notes/{id}/view")
         public ResponseEntity<Resource> viewNote(
                         @PathVariable Long id) {
