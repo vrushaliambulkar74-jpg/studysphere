@@ -1,9 +1,8 @@
 package backend;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.*;
 
 @Entity
 public class Note {
@@ -21,6 +20,11 @@ public class Note {
     private String subject;
     private String fileName;
     private String filePath;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User owner;
 
     public Note() {
     }
@@ -99,5 +103,13 @@ public class Note {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

@@ -1,6 +1,5 @@
 // StudySphere frontend: college-based discovery and PDF sharing.
-const API_BASE = "https://studysphere-1iz2.onrender.com/api/notes";
-
+const API_BASE ="https://studysphere-1iz2.onrender.com/api/notes";
 const sampleNotes = [
   { title:"Java Basics and OOP", college:"Raisoni College", course:"BTech", branch:"CSE", academicYear:"Second Year", semester:"4", subject:"Java Programming", type:"Sample Notes", description:"Introduction to Java, classes, objects, and inheritance." },
   { title:"HTML and CSS Fundamentals", college:"Raisoni College", course:"BTech", branch:"IT", academicYear:"Second Year", semester:"3", subject:"Web Development", type:"Sample Notes", description:"HTML structure, CSS selectors, and responsive design." },
@@ -39,15 +38,58 @@ function displayNotes(items) {
     addMeta(card, "Semester", note.semester); addMeta(card, "Subject", note.subject);
     const actions = document.createElement("div"); actions.className = "note-buttons";
     actions.appendChild(makeButton("View Details", "view-button", () => {
-      if (!note.id) { alert("This is a sample note. Upload a PDF to enable viewing and downloading."); return; }
-      window.open(`${API_BASE}/${encodeURIComponent(note.id)}/view`, "_blank", "noopener");
-    }));
-    if (note.id && note.fileName) {
-      actions.appendChild(makeButton("Download PDF", "download-button", () => {
-        const link = document.createElement("a"); link.href = `${API_BASE}/${encodeURIComponent(note.id)}/file`;
-        link.download = note.fileName; document.body.appendChild(link); link.click(); link.remove();
-      }));
+    if (!note.id) {
+        alert("This is a sample note.");
+        return;
     }
+
+    window.open(
+        `${API_BASE}/${encodeURIComponent(note.id)}/view`,
+        "_blank",
+        "noopener"
+    );
+}));
+
+if (note.id && note.fileName) {
+    actions.appendChild(makeButton("Download PDF", "download-button", () => {
+        const link = document.createElement("a");
+        link.href = `${API_BASE}/${encodeURIComponent(note.id)}/file`;
+        link.download = note.fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }));
+}
+
+// DELETE BUTTON FOR OWN NOTES ONLY
+if (note.id && note.isOwner === true) {
+    actions.appendChild(makeButton("Delete", "delete-button", async () => {
+        if (!confirm("Are you sure you want to delete this note?")) return;
+
+        try {
+            const csrf = await getCsrfToken();
+
+            const response = await fetch(`${API_BASE}/${encodeURIComponent(note.id)}`, {
+                method: "DELETE",
+                headers: {
+                    [csrf.headerName]: csrf.token
+                },
+                credentials: "include"
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Note deleted successfully!");
+                loadNotes();
+            } else {
+                alert(result.message || "Could not delete note.");
+            }
+        } catch (error) {
+            alert("Could not connect to the server.");
+        }
+    }));
+}
     card.appendChild(actions); notesContainer.appendChild(card);
   });
   resultCount.textContent = `Showing ${items.length} of ${notes.length} resources`;
@@ -67,7 +109,9 @@ function filterNotes() {
 }
 async function loadNotes() {
   try {
-    const response = await fetch(API_BASE);
+    const response = await fetch(API_BASE, {
+    credentials: "include"
+});
     if (!response.ok) throw new Error(`Server returned ${response.status}`);
     const uploaded = await response.json();
     const mapped = uploaded.map(n => ({ ...n, semester:text(n.semester), type:"Uploaded PDF", description:"Student-uploaded PDF notes." }));
@@ -104,8 +148,19 @@ uploadForm.addEventListener("submit", async event => {
   const submit = uploadForm.querySelector('button[type="submit"]'); submit.disabled = true;
   uploadMessage.style.color = "#5146c8"; uploadMessage.textContent = "Uploading your notes...";
   try {
-    const response = await fetch(`${API_BASE}/upload`, { method:"POST", body:data });
-    const body = await response.json().catch(() => ({}));
+    
+     const csrf = await getCsrfToken();
+
+const response = await fetch(`${API_BASE}/upload`, {
+    method: "POST",
+    headers: {
+        [csrf.headerName]: csrf.token
+    },
+    body: data,
+    credentials: "include"
+});
+
+const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.message || `Upload failed (${response.status})`);
     uploadMessage.style.color = "green"; uploadMessage.textContent = "PDF uploaded successfully! Your notes are now in the library.";
     uploadForm.reset(); await loadNotes();
@@ -114,3 +169,141 @@ uploadForm.addEventListener("submit", async event => {
   } finally { submit.disabled = false; }
 });
 loadNotes();
+
+async function getCsrfToken() {
+    const response = await fetch(
+       "https://studysphere-1iz2.onrender.com/api/auth/csrf",
+        { credentials: "include" }
+    );
+
+    if (!response.ok) {
+        throw new Error("Could not obtain security token.");
+    }
+
+    const data = await response.json();
+
+    return {
+        token: data.token,
+        headerName: data.headerName
+    };
+}
+
+// REGISTER
+document.getElementById("registerForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
+    const message = document.getElementById("registerMessage");
+
+    try {
+        const csrf = await getCsrfToken();
+
+const response = await fetch(
+    "https://studysphere-1iz2.onrender.com/api/auth/register",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            [csrf.headerName]: csrf.token
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include"
+    }
+);
+
+        const result = await response.json();
+        message.textContent = result.message || (response.ok ? "Account created!" : "Registration failed.");
+    } catch {
+        message.textContent = "Could not connect to the server.";
+    }
+});
+
+// LOGIN
+document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    const message = document.getElementById("loginMessage");
+
+    try {
+       const csrf = await getCsrfToken();
+
+const response = await fetch(
+    "https://studysphere-1iz2.onrender.com/api/auth/login",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            [csrf.headerName]: csrf.token
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include"
+    }
+);
+        const result = await response.json();
+
+        if (response.ok) {
+    await getCsrfToken();
+    message.textContent = "Login successful!";
+    await checkLogin();
+}else {
+            message.textContent = result.message || "Login failed.";
+        }
+    } catch {
+        message.textContent = "Could not connect to the server.";
+    }
+});
+
+// CHECK LOGIN
+async function checkLogin() {
+    try {
+        const response = await fetch("https://studysphere-1iz2.onrender.com/api/auth/me", {
+            credentials: "include"
+        });
+
+        if (!response.ok) return;
+
+        const user = await response.json();
+
+        document.getElementById("authForms").hidden = true;
+        document.getElementById("userAccount").hidden = false;
+        document.getElementById("loggedInUser").textContent =
+            "Logged in as " + user.email;
+    } catch (error) {
+        console.error("Login check failed:", error);
+    }
+}
+
+// LOGOUT
+document.getElementById("logoutButton")?.addEventListener("click", async () => {
+    try {
+        const csrf = await getCsrfToken();
+
+        const response = await fetch(
+            "https://studysphere-1iz2.onrender.com/api/auth/logout",
+            {
+                method: "POST",
+                headers: {
+                    [csrf.headerName]: csrf.token
+                },
+                credentials: "include"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Logout failed.");
+        }
+
+        document.getElementById("authForms").hidden = false;
+        document.getElementById("userAccount").hidden = true;
+
+        document.getElementById("loggedInUser").textContent = "";
+        document.getElementById("loginMessage").textContent = "You have logged out.";
+
+    } catch (error) {
+        alert("Could not log out. Please try again.");
+    }
+});
+checkLogin();

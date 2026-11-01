@@ -25,25 +25,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @CrossOrigin(origins = {
                 "http://localhost:5500",
                 "http://127.0.0.1:5500",
                 "https://studysphere-vrushali.netlify.app"
-})
+}, allowCredentials = "true")
 public class NotesController {
 
         private final Path uploadDirectory = Paths.get("uploads").toAbsolutePath().normalize();
 
         private final NoteRepository noteRepository;
         private final SupabaseStorageService storageService;
+        private final UserRepository userRepository;
 
         public NotesController(
                         NoteRepository noteRepository,
-                        SupabaseStorageService storageService) {
+                        SupabaseStorageService storageService,
+                        UserRepository userRepository) {
                 this.noteRepository = noteRepository;
                 this.storageService = storageService;
+                this.userRepository = userRepository;
         }
 
         @PostMapping("/api/notes/upload")
@@ -87,6 +92,17 @@ public class NotesController {
                         return ResponseEntity.badRequest().body(
                                         Map.of("message", "Invalid filename."));
                 }
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+                if (authentication == null || !authentication.isAuthenticated()
+                                || "anonymousUser".equals(authentication.getPrincipal())) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                        .body(Map.of("message", "Please log in to upload notes."));
+                }
+
+                User owner = userRepository.findByEmail(authentication.getName())
+                                .orElseThrow(() -> new ResponseStatusException(
+                                                HttpStatus.UNAUTHORIZED, "User account not found."));
 
                 try {
                         byte[] content = file.getBytes();
@@ -102,6 +118,7 @@ public class NotesController {
                         }
 
                         Note note = new Note();
+                        note.setOwner(owner);
                         note.setTitle(title.trim());
                         note.setCollege(college.trim());
                         note.setCourse(course.trim());
@@ -142,8 +159,30 @@ public class NotesController {
         }
 
         @GetMapping("/api/notes")
-        public List<Note> getAllNotes() {
-                return noteRepository.findAll();
+        public List<NoteResponse> getAllNotes(
+                        Authentication authentication) {
+
+                boolean loggedIn = authentication != null
+                                && authentication.isAuthenticated()
+                                && !"anonymousUser".equals(authentication.getPrincipal());
+
+                Long currentUserId = null;
+
+                if (loggedIn) {
+                        currentUserId = userRepository.findByEmail(authentication.getName())
+                                        .map(User::getId)
+                                        .orElse(null);
+                }
+
+                final Long userId = currentUserId;
+
+                return noteRepository.findAll().stream()
+                                .map(note -> NoteResponse.from(
+                                                note,
+                                                userId != null
+                                                                && note.getOwner() != null
+                                                                && note.getOwner().getId().equals(userId)))
+                                .toList();
         }
 
         @GetMapping("/api/notes/{id}/file")
@@ -185,11 +224,49 @@ public class NotesController {
         }
 
         @DeleteMapping("/api/notes/{id}")
-        public ResponseEntity<Map<String, String>> deleteNote(@PathVariable Long id) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                                .body(Map.of("message",
-                                                "Note deletion is temporarily disabled until authentication is implemented."));
+        public ResponseEntity<Map<String, String>> deleteNote(
+                        @PathVariable Long id) {
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+                if (authentication == null || !authentication.isAuthenticated()
+                                || "anonymousUser".equals(authentication.getPrincipal())) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                        .body(Map.of("message", "Please log in first."));
+                }
+
+                User owner = userRepository.findByEmail(authentication.getName())
+                                .orElseThrow(() -> new ResponseStatusException(
+                                                HttpStatus.UNAUTHORIZED, "User account not found."));
+
+                Note note = noteRepository.findById(id)
+                                .orElseThrow(() -> new ResponseStatusException(
+                                                HttpStatus.NOT_FOUND, "Note not found."));
+
+                if (note.getOwner() == null
+                                || !note.getOwner().getId().equals(owner.getId())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                        .body(Map.of("message", "You can only delete your own notes."));
+                }
+
+                try {
+                        if (storageService.isConfigured()) {
+                                storageService.delete(note.getFileName());
+                        } else {
+                                Files.deleteIfExists(Paths.get(note.getFilePath()));
+                        }
+
+                        noteRepository.delete(note);
+
+                        return ResponseEntity.ok(
+                                        Map.of("message", "Note deleted successfully."));
+
+                } catch (IOException ex) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body(Map.of("message", "Could not delete the PDF."));
+                }
         }
+
         private Resource loadResource(Note note) {
 
                 try {

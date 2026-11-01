@@ -433,3 +433,104 @@ footer {
 .note-buttons .delete-button { background:#d5d2dd; color:#bc5050; border:1px solid #ebe3e3; font-size:12px; border-radius:5px; }
 .note-buttons .delete-button:hover { background:#fce7e7; }
 .note-buttons button:disabled { opacity:.6; cursor:wait; }
+
+
+/* ===== StudySphere Login and Registration ===== */
+
+#account {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px #0000000d;
+}
+
+#account h2 {
+    color: #5146c8;
+    margin-bottom: 8px;
+}
+
+#account > p {
+    color: #65657b;
+    margin-bottom: 22px;
+}
+
+#authForms {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.auth-box {
+    background: #f8f8ff;
+    border: 1px solid #e2e2f2;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.auth-box h3 {
+    color: #5146c8;
+    margin-bottom: 18px;
+}
+
+.auth-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auth-box label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.auth-box input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d5d5e4;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.auth-box input:focus {
+    outline: 2px solid #5146c8;
+    border-color: #5146c8;
+}
+
+.auth-box button {
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+#registerMessage,
+#loginMessage {
+    min-height: 22px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#userAccount {
+    background: #e8e7ff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#userAccount p {
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+@media (max-width: 650px) {
+    #authForms {
+        grid-template-columns: 1fr;
+    }
+
+    #account {
+        padding: 18px;
+    }
+
+    .auth-box {
+        padding: 18px;
+    }
+}

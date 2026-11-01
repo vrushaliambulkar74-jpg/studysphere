@@ -1,0 +1,12 @@
+StudySphere corrected files
+
+Copy index.html, style.css, script.js to the frontend project root, replacing the existing files.
+Copy Note.java and NotesController.java into backend/src/main/java/backend/, replacing existing files.
+
+The frontend expects Live Server at http://localhost:5500 and Spring Boot at http://localhost:8080.
+Start backend from the backend folder with: mvn spring-boot:run
+Then open index.html using VS Code Live Server.
+
+Important: this version retains Delete for local testing. Do not deploy a public website with unrestricted public deletion; add authentication/ownership checks before real public launch. The backend upload folder and database must be persistent on hosting.
+
+The uploaded Note.java previously had getFileName()/getFilePath() methods but no corresponding fields, which prevents compilation. This corrected version includes both fields.

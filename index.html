@@ -14,11 +14,62 @@
     </header>
 
     <nav>
-        <a href="#">Home</a>
-        <a href="#notes">Study Notes</a>
-        <a href="#quizzes">Quizzes</a>
-        <a href="#about">About</a>
-    </nav>
+    <a href="#">Home</a>
+    <a href="#notes">Study Notes</a>
+    <a href="#upload-notes">Upload Notes</a>
+    <a href="#account">My Account</a>
+    <a href="#quizzes">Quizzes</a>
+    <a href="#about">About</a>
+</nav>
+
+<section id="account">
+    <h2>My Account</h2>
+    <p>Create an account or log in to share your notes.</p>
+
+    <div id="authForms">
+
+        <div class="auth-box">
+            <h3>Register</h3>
+
+            <form id="registerForm">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail"
+                       placeholder="Enter your email" required>
+
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword"
+                       placeholder="Minimum 8 characters"
+                       minlength="8" required>
+
+                <button type="submit">Create Account</button>
+                <p id="registerMessage" role="status"></p>
+            </form>
+        </div>
+
+        <div class="auth-box">
+            <h3>Login</h3>
+
+            <form id="loginForm">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail"
+                       placeholder="Enter your email" required>
+
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword"
+                       placeholder="Enter your password" required>
+
+                <button type="submit">Login</button>
+                <p id="loginMessage" role="status"></p>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="userAccount" hidden>
+        <p id="loggedInUser"></p>
+        <button type="button" id="logoutButton">Logout</button>
+    </div>
+</section>
 
     <main>
         <section class="hero">
@@ -91,7 +142,7 @@
             </div>
 
             <div class="filter-actions">
-                <button id="searchButton">Find Notes</button>
+               <button id="searchButton">Find Notes</button>
                 <button id="resetButton" class="reset-button">
                     Reset Filters
                 </button>
